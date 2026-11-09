@@ -22,3 +22,7 @@ def database_write():
                 database_file.truncate()
                 database_file.write(jsondumps(database_dict, indent=4))
                 database_file.flush()
+
+def get_or_set(d: dict, key: str, default):
+    if key not in d: d[key] = default
+    return d[key]
