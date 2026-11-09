@@ -7,9 +7,9 @@ def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     parser.set_defaults(func=execute)
 
 def execute(args: Namespace):
+    schema_name = args.name
     with database_write() as db:
         if 'schemas' not in db: return
-        schema_name = args.name
         schemas: list = db['schemas']
         schema_index = next((index for index in range(len(schemas)) if schemas[index]['name'] == schema_name), None)
         if schema_index is not None: del schemas[schema_index]

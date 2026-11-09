@@ -10,8 +10,8 @@ def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     parser.set_defaults(func=execute)
 
 def execute(args: Namespace):
+    schema_name = args.name
     with database_write() as db:
-        schema_name = args.name
         schemas: list = get_or_set(db, 'schemas', [])
         if schema_name in (schema['name'] for schema in schemas): raise ValueError(f'(expected) Backup schema named "{schema_name}" already exists.')
         else: schemas.append({
@@ -19,3 +19,4 @@ def execute(args: Namespace):
             'source_path': str(args.source_path.resolve()),
             'backup_path': str(args.backup_path.resolve()),
         })
+    print(f'Created new backup schema "{schema_name}".')
