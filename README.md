@@ -1,4 +1,4 @@
-# Simple Backup Tool
+# Simple Backup Tool for Linux
 
 **IN DEVELOPMENT**
 
