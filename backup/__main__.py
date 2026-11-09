@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from pathlib import Path
-from . import list, create
+from . import list, create, delete
 
 DATABASE_PATH = (Path(__file__).parent / 'database.json').resolve()
 
@@ -13,6 +13,7 @@ def main():
 
     list.register_subparser(subparsers)
     create.register_subparser(subparsers)
+    delete.register_subparser(subparsers)
 
     args = parser.parse_args()
 
