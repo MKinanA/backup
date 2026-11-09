@@ -1,3 +1,6 @@
+from sys import platform
+if platform != 'linux': raise SystemExit('This tool is intended for Linux only.')
+
 from argparse import ArgumentParser
 from pathlib import Path
 from . import list, create, delete
