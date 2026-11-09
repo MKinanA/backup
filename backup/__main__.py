@@ -17,6 +17,11 @@ def main():
 
     args = parser.parse_args()
 
-    args.func(args)
+    try: args.func(args)
+    except BaseException as e:
+        if str(e).lower().startswith(expected_error_flag := '(expected) '): raise SystemExit(f'Error: {str(e)[len(expected_error_flag):]}')
+        else:
+            print('An unexpected exception occurred.')
+            raise e
 
 if __name__ == '__main__': main()
