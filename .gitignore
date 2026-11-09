@@ -1,0 +1,14 @@
+.env
+__pycache__
+.db*
+__test__
+__test__.*
+cache
+*.private.*
+*.unused.*
+tempCodeRunnerFile.py
+.python-version
+dev_venv
+.vscode
+venv
+database.json
