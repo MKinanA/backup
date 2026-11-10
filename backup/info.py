@@ -1,5 +1,4 @@
 from argparse import ArgumentParser, _SubParsersAction, Namespace
-from pathlib import Path
 from .utils.database import database_read, get_or_set
 
 def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
