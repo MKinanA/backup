@@ -12,6 +12,9 @@ def execute(args: Namespace):
     schemas = get_or_set(database_read(), 'schemas', [])
     if not schema_name in (schema['name'] for schema in schemas): raise KeyError(f'(expected) Schema "{schema_name}" doesn\'t exist.')
     schema: dict = schemas[next((index for index in range(len(schemas)) if schemas[index]['name'] == schema_name))]
+    validate_schema(schema)
+    print(f'Nothing wrong was detected in {schema_name}.')
+
+def validate_schema(schema: dict):
     if not Path(source_path := schema['source_path']).exists(): raise FileNotFoundError(f'(expected) Source path `{source_path}` doesn\'t exist.')
     if not ((backup_Path := Path(backup_path := schema['backup_path'])).exists() and backup_Path.is_dir()): raise FileNotFoundError(f'(expected) Backup path `{backup_path}` doesn\'t exist or isn\'t a directory.')
-    print(f'Nothing wrong was detected in {schema_name}.')
