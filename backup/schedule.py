@@ -6,7 +6,7 @@ from .utils.database import database_read, get_or_set
 UNSCHEDULING_KEYWORDS = ('unschedule', 'delete', 'remove', 'none', 'null', 'never', 'inactive', 'deactivate', 'disable')
 
 def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
-    parser = subparsers.add_parser('create', help='Create a new backup schema.')
+    parser = subparsers.add_parser('schedule', help='Schedule a backup schema to run automatically.')
     parser.add_argument('name', type=str, help='Name of the backup schema.')
     parser.add_argument('-s', '--set', metavar='<cron_expression>', type=validate_schedule_expression, help=f'Either a cron expression for the scheduling, or {'/'.join(UNSCHEDULING_KEYWORDS)} to unschedule the schema.')
     parser.set_defaults(func=execute)
