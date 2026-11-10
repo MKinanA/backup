@@ -3,7 +3,7 @@ if platform != 'linux': raise SystemExit('This tool is intended for Linux only.'
 
 from argparse import ArgumentParser
 from pathlib import Path
-from . import list, create, info, validate, schedule, delete
+from . import list, create, info, validate, run, schedule, delete
 
 DATABASE_PATH = (Path(__file__).parent / 'database.json').resolve()
 
@@ -18,6 +18,7 @@ def main():
     create.register_subparser(subparsers)
     info.register_subparser(subparsers)
     validate.register_subparser(subparsers)
+    run.register_subparser(subparsers)
     schedule.register_subparser(subparsers)
     delete.register_subparser(subparsers)
 
