@@ -3,7 +3,7 @@ from .utils.database import database_write, get_or_set
 
 def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     parser = subparsers.add_parser('delete', help='Delete a backup schema.')
-    parser.add_argument('name', type=str)
+    parser.add_argument('name', type=str, help='Name of the backup schema.')
     parser.set_defaults(func=execute)
 
 def execute(args: Namespace):
