@@ -3,7 +3,8 @@ if platform != 'linux': raise SystemExit('This tool is intended for Linux only.'
 
 from argparse import ArgumentParser
 from pathlib import Path
-from . import list, create, info, validate, run, check, schedule, delete
+from . import list, create, info, modify, validate, run, check, schedule, delete
+from .utils.expected_exception import EXPECTED_EXCEPTION_ATTR
 
 DATABASE_PATH = (Path(__file__).parent / 'database.json').resolve()
 
@@ -17,6 +18,7 @@ def main() -> int:
     list.register_subparser(subparsers)
     create.register_subparser(subparsers)
     info.register_subparser(subparsers)
+    modify.register_subparser(subparsers)
     validate.register_subparser(subparsers)
     run.register_subparser(subparsers)
     check.register_subparser(subparsers)
@@ -27,7 +29,7 @@ def main() -> int:
 
     try: return 0 if (exit_code := args.func(args)) is None else exit_code
     except BaseException as e:
-        if str(e).lower().startswith(expected_error_flag := '(expected) '): raise SystemExit(f'Error: {str(e)[len(expected_error_flag):]}')
+        if getattr(e, EXPECTED_EXCEPTION_ATTR, False): raise SystemExit(f'Error: {' '.join(str(arg) for arg in e.args)}')
         else:
             print('An unexpected exception occurred.')
             raise e

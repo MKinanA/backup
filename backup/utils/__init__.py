@@ -1,1 +1,1 @@
-from . import open_file_with_lock, database
+from . import open_file_with_lock, database, expected_exception

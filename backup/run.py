@@ -5,6 +5,7 @@ from datetime import datetime
 from tarfile import open as opentar
 from .validate import validate_schema
 from .utils.database import database_read, get_or_set
+from .utils.expected_exception import expected_exception as expected
 
 BACKUP_ARCHIVE_FILE_EXTENSION = '.tar.gz'
 BACKUP_ARCHIVE_HASH_ALGORITHM = 'sha256'
@@ -18,7 +19,7 @@ def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 def execute(args: Namespace):
     schema_name = args.name
     schemas = get_or_set(database_read(), 'schemas', [])
-    if not schema_name in (schema['name'] for schema in schemas): raise KeyError(f'(expected) Schema "{schema_name}" doesn\'t exist.')
+    if not schema_name in (schema['name'] for schema in schemas): raise expected(KeyError(f'Schema "{schema_name}" doesn\'t exist.'))
     schema: dict = schemas[next((index for index in range(len(schemas)) if schemas[index]['name'] == schema_name))]
     validate_schema(schema)
 

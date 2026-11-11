@@ -1,6 +1,7 @@
 from argparse import ArgumentParser, _SubParsersAction, Namespace
 from pathlib import Path
 from .utils.database import database_read, get_or_set
+from .utils.expected_exception import expected_exception as expected
 
 def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     parser = subparsers.add_parser('validate', help='Validate a backup schema, such as checking the provided paths.')
@@ -10,11 +11,11 @@ def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 def execute(args: Namespace):
     schema_name = args.name
     schemas = get_or_set(database_read(), 'schemas', [])
-    if not schema_name in (schema['name'] for schema in schemas): raise KeyError(f'(expected) Schema "{schema_name}" doesn\'t exist.')
+    if not schema_name in (schema['name'] for schema in schemas): raise expected(KeyError(f'Schema "{schema_name}" doesn\'t exist.'))
     schema: dict = schemas[next((index for index in range(len(schemas)) if schemas[index]['name'] == schema_name))]
     validate_schema(schema)
     print(f'Nothing wrong was detected in {schema_name}.')
 
 def validate_schema(schema: dict, only: list[str] | tuple[str] | None = None):
-    if ('source_path' in only if only is not None else True) and not Path(source_path := schema['source_path']).exists(): raise FileNotFoundError(f'(expected) Source path `{source_path}` doesn\'t exist.')
-    if ('backup_path' in only if only is not None else True) and not ((backup_Path := Path(backup_path := schema['backup_path'])).exists() and backup_Path.is_dir()): raise FileNotFoundError(f'(expected) Backup path `{backup_path}` doesn\'t exist or isn\'t a directory.')
+    if ('source_path' in only if only is not None else True) and not Path(source_path := schema['source_path']).exists(): raise expected(FileNotFoundError(f'Source path `{source_path}` doesn\'t exist.'))
+    if ('backup_path' in only if only is not None else True) and not ((backup_Path := Path(backup_path := schema['backup_path'])).exists() and backup_Path.is_dir()): raise expected(FileNotFoundError(f'Backup path `{backup_path}` doesn\'t exist or isn\'t a directory.'))
