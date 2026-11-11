@@ -8,6 +8,7 @@ from .utils.database import database_read, get_or_set
 
 BACKUP_ARCHIVE_FILE_EXTENSION = '.tar.gz'
 BACKUP_ARCHIVE_HASH_ALGORITHM = 'sha256'
+BACKUP_ARCHIVE_TIMESTAMP_FORMAT = '%Y-%m-%d-%H-%M-%S'
 
 def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     parser = subparsers.add_parser('run', help='Run a backup schema, creating an archive of the source file/directory and storing it in the backup directory.')
@@ -21,7 +22,7 @@ def execute(args: Namespace):
     schema: dict = schemas[next((index for index in range(len(schemas)) if schemas[index]['name'] == schema_name))]
     validate_schema(schema)
 
-    with opentar(backup_tar_path := ((backup_path := Path(schema['backup_path'])) / f'{schema_name} {datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}{BACKUP_ARCHIVE_FILE_EXTENSION}'), 'w:gz') as backup_tar:
+    with opentar(backup_tar_path := ((backup_path := Path(schema['backup_path'])) / f'{schema_name} {datetime.now().strftime(BACKUP_ARCHIVE_TIMESTAMP_FORMAT)}{BACKUP_ARCHIVE_FILE_EXTENSION}'), 'w:gz') as backup_tar:
         if (source_path := Path(schema['source_path'])).is_dir():
             print('`source_path` is a directory, iterating...')
             for path in source_path.iterdir():

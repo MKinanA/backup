@@ -15,6 +15,6 @@ def execute(args: Namespace):
     validate_schema(schema)
     print(f'Nothing wrong was detected in {schema_name}.')
 
-def validate_schema(schema: dict):
-    if not Path(source_path := schema['source_path']).exists(): raise FileNotFoundError(f'(expected) Source path `{source_path}` doesn\'t exist.')
-    if not ((backup_Path := Path(backup_path := schema['backup_path'])).exists() and backup_Path.is_dir()): raise FileNotFoundError(f'(expected) Backup path `{backup_path}` doesn\'t exist or isn\'t a directory.')
+def validate_schema(schema: dict, only: list[str] | tuple[str] | None = None):
+    if ('source_path' in only if only is not None else True) and not Path(source_path := schema['source_path']).exists(): raise FileNotFoundError(f'(expected) Source path `{source_path}` doesn\'t exist.')
+    if ('backup_path' in only if only is not None else True) and not ((backup_Path := Path(backup_path := schema['backup_path'])).exists() and backup_Path.is_dir()): raise FileNotFoundError(f'(expected) Backup path `{backup_path}` doesn\'t exist or isn\'t a directory.')
