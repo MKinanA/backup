@@ -1,9 +1,13 @@
 from argparse import ArgumentParser, _SubParsersAction, Namespace
 from pathlib import Path
+from hashlib import file_digest as hash
 from datetime import datetime
 from tarfile import open as opentar
 from .validate import validate_schema
 from .utils.database import database_read, get_or_set
+
+BACKUP_ARCHIVE_FILE_EXTENSION = '.tar.gz'
+BACKUP_ARCHIVE_HASH_ALGORITHM = 'sha256'
 
 def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     parser = subparsers.add_parser('run', help='Run a backup schema, creating an archive of the source file/directory and storing it in the backup directory.')
@@ -17,7 +21,7 @@ def execute(args: Namespace):
     schema: dict = schemas[next((index for index in range(len(schemas)) if schemas[index]['name'] == schema_name))]
     validate_schema(schema)
 
-    with opentar(backup_tar_path := ((backup_path := Path(schema['backup_path'])) / f'{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}.tar.gz'), 'w:gz') as backup_tar:
+    with opentar(backup_tar_path := ((backup_path := Path(schema['backup_path'])) / f'{schema_name} {datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}{BACKUP_ARCHIVE_FILE_EXTENSION}'), 'w:gz') as backup_tar:
         if (source_path := Path(schema['source_path'])).is_dir():
             print('`source_path` is a directory, iterating...')
             for path in source_path.iterdir():
@@ -26,4 +30,5 @@ def execute(args: Namespace):
         else:
             print('`source_path` is not a directory, copying into backup archive...')
             backup_tar.add(source_path, arcname=source_path.name)
-    print(f'Done, backup archive stored in `{backup_path}` as `{backup_tar_path.name}`.')
+    with open(backup_tar_path, 'rb') as backup_tar: backup_tar_path.rename(backup_tar_path := (backup_tar_path.parent / f'{backup_tar_path.name[:-len(BACKUP_ARCHIVE_FILE_EXTENSION)]} {(checksum := hash(backup_tar, BACKUP_ARCHIVE_HASH_ALGORITHM).hexdigest())}{BACKUP_ARCHIVE_FILE_EXTENSION}'))
+    print(f'Done, backup archive stored in `{backup_path}` as `{backup_tar_path.name}`.\nChecksum is "{checksum}" ({BACKUP_ARCHIVE_HASH_ALGORITHM}).')
