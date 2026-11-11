@@ -20,12 +20,12 @@ def execute(args: Namespace):
 
     files = 0
     checked_files = 0
-    checksum_unmatches = 0
+    checksum_mismatches = 0
     for backup_tar_path in Path(schema['backup_path']).iterdir():
         if backup_tar_path.is_file() and (files := files + 1) and ((backup_name_parsed := parse_backup_name(backup_name := backup_tar_path.name)) is not None) and (backup_name_parsed[0] == schema_name) and (checked_files := checked_files + 1):
-            with open(backup_tar_path, 'rb') as backup_tar: print(f'> {backup_name}: {'OK' if hash(backup_tar, BACKUP_ARCHIVE_HASH_ALGORITHM).hexdigest() == backup_name_parsed[2] else ((checksum_unmatches := checksum_unmatches + 1) and 'WARNING: CHECKSUM UNMATCH!')}')
-    print(f'Total: {checksum_unmatches} checksum unmatches out of {checked_files} recognized backup archive files (out of all {files} inside the backup directory).\n{'Check your backup archive files.' if checksum_unmatches > 0 else ('Do you store other files in the directory?' if files > checked_files else 'Good.')}')
-    if checksum_unmatches > 0: return 1
+            with open(backup_tar_path, 'rb') as backup_tar: print(f'> {backup_name}: {'OK' if hash(backup_tar, BACKUP_ARCHIVE_HASH_ALGORITHM).hexdigest() == backup_name_parsed[2] else ((checksum_mismatches := checksum_mismatches + 1) and 'WARNING: CHECKSUM MISMATCH!')}')
+    print(f'Total: {checksum_mismatches} checksum mismatch{'es' if checksum_mismatches > 1 else ''} out of {checked_files} recognized backup archive file{'s' if checked_files > 1 else ''} (out of all {files} file{'s' if files > 1 else ''} inside the backup directory).\n{'Check your backup archive files.' if checksum_mismatches > 0 else ('Do you store other files in the directory?' if files > checked_files else 'Good.')}')
+    if checksum_mismatches > 0: return 1
 
 def parse_backup_name(name: str, raise_on_invalid: bool = False) -> tuple[str, datetime, str] | None:
     try:
