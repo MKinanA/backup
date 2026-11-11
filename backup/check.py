@@ -29,8 +29,8 @@ def execute(args: Namespace):
 
 def parse_backup_name(name: str, raise_on_invalid: bool = False) -> tuple[str, datetime, str] | None:
     try:
-        if (not name.endswith(BACKUP_ARCHIVE_FILE_EXTENSION)) or (len(parts := name[:-len(BACKUP_ARCHIVE_FILE_EXTENSION)].split(' ')) < 3) or (not (timestamp := datetime.strptime(parts[-2], BACKUP_ARCHIVE_TIMESTAMP_FORMAT))) or (len(parts[-1]) != 64) or any((char.lower() not in (*(str(x) for x in range(0, 10)), *'abcdef')) for char in parts[-1]):
-            if raise_on_invalid: raise ValueError
-            else: return None
-    except ValueError: raise ValueError(f'(expected) The backup archive filename doesn\'t appear to be in the expected format (containing the backup schema name, a valid timestamp in a specific format, a 64-character SHA-256 hash checksum, and the `{BACKUP_ARCHIVE_FILE_EXTENSION}` extension).')
+        if (not name.endswith(BACKUP_ARCHIVE_FILE_EXTENSION)) or (len(parts := name[:-len(BACKUP_ARCHIVE_FILE_EXTENSION)].split(' ')) < 3) or (not (timestamp := datetime.strptime(parts[-2], BACKUP_ARCHIVE_TIMESTAMP_FORMAT))) or (len(parts[-1]) != 64) or any((char.lower() not in (*(str(x) for x in range(0, 10)), *'abcdef')) for char in parts[-1]): raise ValueError
+    except ValueError:
+        if raise_on_invalid: raise ValueError(f'(expected) The backup archive filename doesn\'t appear to be in the expected format (containing the backup schema name, a valid timestamp in a specific format, a 64-character SHA-256 hash checksum, and the `{BACKUP_ARCHIVE_FILE_EXTENSION}` extension).')
+        else: return None
     return (' '.join(parts[:-2]), timestamp, parts[-1])
