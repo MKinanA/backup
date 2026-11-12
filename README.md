@@ -6,17 +6,19 @@
 
 - `$ python -m backup --help`
   ```
-  usage: python -m backup [-h] {list,create,info,validate,run,schedule,delete} ...
+  usage: python -m backup [-h] {list,create,info,modify,validate,run,check,schedule,delete} ...
 
   Simple backup tool for Linux.
 
   positional arguments:
-    {list,create,info,validate,run,schedule,delete}
+    {list,create,info,modify,validate,run,check,schedule,delete}
       list                List created backup profiles.
       create              Create a new backup profile.
       info                Check the information (fields) of a backup profile.
+      modify              Modify an existing backup profile.
       validate            Validate a backup profile, such as checking the provided paths.
       run                 Run a backup profile, creating an archive of the source file/directory and storing it in the backup directory.
+      check               Check the backup archives stored in the backup path of a backup profile using their checksums for integrity.
       schedule            Schedule a backup profile to run automatically.
       delete              Delete a backup profile.
 
