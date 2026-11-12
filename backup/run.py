@@ -3,7 +3,7 @@ from pathlib import Path
 from hashlib import file_digest as hash
 from datetime import datetime
 from tarfile import open as opentar
-from .validate import validate_schema
+from .validate import validate_profile
 from .utils.database import database_read, get_or_set
 from .utils.expected_exception import expected_exception as expected
 
@@ -12,19 +12,19 @@ BACKUP_ARCHIVE_HASH_ALGORITHM = 'sha256'
 BACKUP_ARCHIVE_TIMESTAMP_FORMAT = '%Y-%m-%d-%H-%M-%S'
 
 def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
-    parser = subparsers.add_parser('run', help='Run a backup schema, creating an archive of the source file/directory and storing it in the backup directory.')
-    parser.add_argument('name', type=str, help='Name of the backup schema.')
+    parser = subparsers.add_parser('run', help='Run a backup profile, creating an archive of the source file/directory and storing it in the backup directory.')
+    parser.add_argument('name', type=str, help='Name of the backup profile.')
     parser.set_defaults(func=execute)
 
 def execute(args: Namespace):
-    schema_name = args.name
-    schemas = get_or_set(database_read(), 'schemas', [])
-    if not schema_name in (schema['name'] for schema in schemas): raise expected(KeyError(f'Schema "{schema_name}" doesn\'t exist.'))
-    schema: dict = schemas[next((index for index in range(len(schemas)) if schemas[index]['name'] == schema_name))]
-    validate_schema(schema)
+    profile_name = args.name
+    profiles = get_or_set(database_read(), 'profiles', [])
+    if not profile_name in (profile['name'] for profile in profiles): raise expected(KeyError(f'Profile "{profile_name}" doesn\'t exist.'))
+    profile: dict = profiles[next((index for index in range(len(profiles)) if profiles[index]['name'] == profile_name))]
+    validate_profile(profile)
 
-    with opentar(backup_tar_path := ((backup_path := Path(schema['backup_path'])) / f'{schema_name} {datetime.now().strftime(BACKUP_ARCHIVE_TIMESTAMP_FORMAT)}{BACKUP_ARCHIVE_FILE_EXTENSION}'), 'w:gz') as backup_tar:
-        if (source_path := Path(schema['source_path'])).is_dir():
+    with opentar(backup_tar_path := ((backup_path := Path(profile['backup_path'])) / f'{profile_name} {datetime.now().strftime(BACKUP_ARCHIVE_TIMESTAMP_FORMAT)}{BACKUP_ARCHIVE_FILE_EXTENSION}'), 'w:gz') as backup_tar:
+        if (source_path := Path(profile['source_path'])).is_dir():
             print('`source_path` is a directory, iterating...')
             for path in source_path.iterdir():
                 print(f'> {path.name}')

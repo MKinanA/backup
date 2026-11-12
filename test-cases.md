@@ -25,31 +25,31 @@ Test cases untuk backup tool ini. ***In development***.
 
 ---
 
-## B. Backup Schema Creation
+## B. Backup Profile Creation
 
-  ### 1. Tampilkan daftar schema.
-  Jalankan `python -m backup list` untuk menampilkan daftar schema yang ada. Output seharusnya kosong karena belum ada schema yang dibuat.
+  ### 1. Tampilkan daftar profile.
+  Jalankan `python -m backup list` untuk menampilkan daftar profile yang ada. Output seharusnya kosong karena belum ada profile yang dibuat.
 
-  ### 2. Buat schema baru.
+  ### 2. Buat profile baru.
   Jalankan `python -m backup create <nama>` menggunakan nama bebas, misalnya `backup1`.
 
-  ### 3. Tampilkan daftar schema lagi.
-  Jalankan kembali `python -m backup list` dan pastikan nama schema yang baru dibuat sudah muncul.
+  ### 3. Tampilkan daftar profile lagi.
+  Jalankan kembali `python -m backup list` dan pastikan nama profile yang baru dibuat sudah muncul.
 
   Jika seluruh langkah berhasil, tes sukses.
 
 ---
 
-## C. Backup Schema Deletion
+## C. Backup Profile Deletion
 
-  ### 1. Pastikan schema yang akan dihapus.
-  Jalankan `python -m backup list` dan pastikan ada schema untuk dicoba dihapus. Jika belum ada, lakukan tes B lagi.
+  ### 1. Pastikan profile yang akan dihapus.
+  Jalankan `python -m backup list` dan pastikan ada profile untuk dicoba dihapus. Jika belum ada, lakukan tes B lagi.
 
-  ### 2. Hapus schema yang sudah dibuat.
-  Jalankan `python -m backup delete <nama>` menggunakan nama schema yang sudah dibuat sebelumnya, misalnya `backup1`.
+  ### 2. Hapus profile yang sudah dibuat.
+  Jalankan `python -m backup delete <nama>` menggunakan nama profile yang sudah dibuat sebelumnya, misalnya `backup1`.
 
-  ### 3. Tampilkan daftar schema lagi.
-  Jalankan kembali `python -m backup list` dan pastikan nama schema yang dihapus sudah tidak muncul lagi.
+  ### 3. Tampilkan daftar profile lagi.
+  Jalankan kembali `python -m backup list` dan pastikan nama profile yang dihapus sudah tidak muncul lagi.
 
   Jika seluruh langkah berhasil, tes sukses.
 

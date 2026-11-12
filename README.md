@@ -12,13 +12,13 @@
 
   positional arguments:
     {list,create,info,validate,run,schedule,delete}
-      list                List created backup schemas.
-      create              Create a new backup schema.
-      info                Check the information (fields) of a backup schema.
-      validate            Validate a backup schema, such as checking the provided paths.
-      run                 Run a backup schema, creating an archive of the source file/directory and storing it in the backup directory.
-      schedule            Schedule a backup schema to run automatically.
-      delete              Delete a backup schema.
+      list                List created backup profiles.
+      create              Create a new backup profile.
+      info                Check the information (fields) of a backup profile.
+      validate            Validate a backup profile, such as checking the provided paths.
+      run                 Run a backup profile, creating an archive of the source file/directory and storing it in the backup directory.
+      schedule            Schedule a backup profile to run automatically.
+      delete              Delete a backup profile.
 
   options:
     -h, --help            show this help message and exit
