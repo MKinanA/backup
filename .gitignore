@@ -12,3 +12,4 @@ dev_venv
 .vscode
 venv
 database.json
+cron.log
