@@ -1,3 +1,5 @@
+from sys import executable
+from shlex import quote
 from argparse import ArgumentParser, _SubParsersAction, Namespace
 from pathlib import Path
 from typing import Literal
@@ -30,7 +32,7 @@ def execute(args: Namespace):
     else:
         if args.set:
             if job is None: job = cron.new(
-                command='/usr/bin/echo "hi"',
+                command=f'(cd {quote(str(module_loc := Path(__file__).parent.parent.resolve()))} && {{ {(module_command := f'{quote(executable)} -m {quote(__name__.split('.')[0])}')} run {quote(profile_name)}; {module_command} check {quote(profile_name)}; }}; echo) >> {quote(str(module_loc / 'cron.log'))} 2>&1',
                 comment=f'{CRON_JOB_COMMENT_PREFIX} {profile_name}',
             )
             if args.set: job.setall(args.set)
