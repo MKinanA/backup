@@ -26,7 +26,7 @@
     -h, --help            show this help message and exit
   ```
 
----
+<!-----
 
 ## Known Edge Cases
 
@@ -34,4 +34,4 @@
   Backup archive files are named with a timestamp down to the second. If two backup runs are initiated within the same second, they may attempt to write to the same archive file, which is not what you might want to happen. **The program DOES NOT check nor warn about this**.
 
 - ### Backup destination inside the source directory can cause recursive backups.
-  If the backup destination path is located inside the source directory, the backup process might include its own partial backup archive file in the backup itself. **The program DOES NOT check nor warn about this**.
+  If the backup destination path is located inside the source directory, the backup process might include its own partial backup archive file in the backup itself. **The program DOES NOT check nor warn about this**.-->
