@@ -1,6 +1,8 @@
 from argparse import ArgumentParser, _SubParsersAction, Namespace
+from crontab import CronItem
 from .utils.database import database_write, get_or_set
 from .utils.expected_exception import expected_exception as expected
+from .schedule import get_crontab, profile_cron
 
 def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     parser = subparsers.add_parser('delete', help='Delete a backup profile.')
@@ -10,8 +12,17 @@ def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
 def execute(args: Namespace):
     profile_name = args.name
     with database_write() as db:
-        if 'profiles' not in db: return
         profiles = get_or_set(db, 'profiles', [])
         if not profile_name in (profile['name'] for profile in profiles): raise expected(KeyError(f'Profile "{profile_name}" doesn\'t exist.'))
+        try:
+            if isinstance(profile_cron(profile_name, get_crontab()), CronItem):
+                e = expected(ValueError(f'Profile "{profile_name}" is scheduled to run automatically. Unschedule it first before deleting it.'))
+                setattr(e, 'cron_exists', True)
+                raise e
+        except Exception as e:
+            if getattr(e, 'cron_exists', False): raise e
+            while True:
+                if (confirm := input('Failed to check if the profile is scheduled and has a cron job, delete anyway? [y/n]: ').lower()) in ('y', 'ye', 'yes'): break
+                elif confirm in ('n', 'no'): return 1
         del profiles[next((index for index in range(len(profiles)) if profiles[index]['name'] == profile_name))]
     print(f'Deleted backup profile "{profile_name}".')
