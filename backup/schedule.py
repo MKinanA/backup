@@ -1,4 +1,5 @@
 from sys import executable
+from shutil import which
 from shlex import quote
 from argparse import ArgumentParser, _SubParsersAction, Namespace
 from pathlib import Path
@@ -9,8 +10,6 @@ from .utils.expected_exception import expected_exception as expected
 
 UNSCHEDULING_KEYWORDS = ('unschedule', 'delete', 'remove', 'none', 'null', 'never', 'inactive', 'deactivate', 'disable')
 CRON_JOB_COMMENT_PREFIX = 'sbtfl'
-
-cron = CronTab(user=True)
 
 def register_subparser(subparsers: _SubParsersAction[ArgumentParser]):
     parser = subparsers.add_parser('schedule', help='Schedule a backup profile to run automatically.')
@@ -24,7 +23,9 @@ def execute(args: Namespace):
     if not profile_name in (profile['name'] for profile in profiles): raise expected(KeyError(f'Profile "{profile_name}" doesn\'t exist.'))
     profile: dict = profiles[next((index for index in range(len(profiles)) if profiles[index]['name'] == profile_name))]
 
-    job = profile_cron(profile_name)
+    cron = get_crontab()
+
+    job = profile_cron(profile_name, cron)
     already_scheduled_before = job is not None
     if args.set is None:
         if job is None: print(f'Backup profile "{profile_name}" isn\'t scheduled yet.')
@@ -45,4 +46,10 @@ def validate_schedule_expression(expression: str) -> str | Literal[False]:
     elif expression.lower() in UNSCHEDULING_KEYWORDS: return False
     else: raise expected(ValueError('Invalid cron schedule expression.'))
 
-def profile_cron(profile_name) -> CronItem | None: return next((job for job in cron if job.comment == f'{CRON_JOB_COMMENT_PREFIX} {profile_name}'), None)
+def profile_cron(profile_name, cron: CronTab) -> CronItem | None: return next((job for job in cron if job.comment == f'{CRON_JOB_COMMENT_PREFIX} {profile_name}'), None)
+
+def get_crontab() -> CronTab:
+    try:
+        if which('crontab') is not None: return CronTab(user=True)
+        else: raise RuntimeError('Couldn\'t find the `crontab` command.')
+    except Exception as e: raise expected(RuntimeError('Failed to access the cron utility (`crontab`), make sure it\'s installed and added to PATH.')) from e
