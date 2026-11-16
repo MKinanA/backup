@@ -1,5 +1,9 @@
 from sys import platform, exit
-if platform != 'linux': raise SystemExit('This tool is intended for Linux only.')
+from os import name as osname
+
+if platform != 'linux':
+    if osname == 'posix': print('WARNING: POSIX-like non-linux OS detected, support is not guaranteed.')
+    else: raise SystemExit('This tool is intended for Linux only.')
 
 from argparse import ArgumentParser
 from pathlib import Path
