@@ -14,7 +14,7 @@ def database_read() -> dict:
         attempts += 1
         database_raw = None
         try:
-            with open(DATABASE_PATH, 'r') as database_file: return jsonloads(database_raw := database_file.read())
+            with open_file_with_lock(DATABASE_PATH, shared_readonly=True) as database_file: return jsonloads(database_raw := database_file.read())
         except (JSONDecodeError, FileNotFoundError) as e:
             exc = e
             if not database_raw:
