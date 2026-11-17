@@ -13,9 +13,6 @@ from .utils.expected_exception import EXPECTED_EXCEPTION_ATTR
 DATABASE_PATH = (Path(__file__).parent / 'database.json').resolve()
 
 def main() -> int:
-    if not DATABASE_PATH.exists():
-        with open(DATABASE_PATH, 'w') as database_file: database_file.write('{}')
-
     parser = ArgumentParser(description='Simple backup tool for Linux.')
     subparsers = parser.add_subparsers(required=True)
 
