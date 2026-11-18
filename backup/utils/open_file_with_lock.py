@@ -1,4 +1,4 @@
-from os import open as osopen, O_CREAT
+from os import open as osopen, O_CREAT, fsync
 from fcntl import flock, LOCK_EX, LOCK_UN, LOCK_SH
 from contextlib import contextmanager
 from pathlib import Path
@@ -10,4 +10,5 @@ def open_file_with_lock(path: str | Path, shared_readonly: bool = False):
         try: yield file
         finally:
             file.flush()
+            fsync(file.fileno())
             flock(file, LOCK_UN)
