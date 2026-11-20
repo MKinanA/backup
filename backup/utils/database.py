@@ -10,14 +10,14 @@ TEMP_DATABASE_PATH = Path(str(DATABASE_PATH) + '.tmp')
 MAX_READ_ATTEMPTS = 2
 MAX_WRITE_ATTEMPTS = 10
 
-def database_read() -> dict:
+def database_read(with_shared_lock: bool = True) -> dict:
     attempts = 0
     exc = None
     while attempts < MAX_READ_ATTEMPTS:
         attempts += 1
         database_raw = None
         try:
-            with open_file_with_lock(DATABASE_PATH, shared_readonly=True) as database_file: return jsonloads(database_raw := database_file.read())
+            with open_file_with_lock(DATABASE_PATH, shared_readonly=True) if with_shared_lock else open(DATABASE_PATH) as database_file: return jsonloads(database_raw := database_file.read())
         except (JSONDecodeError, FileNotFoundError) as e:
             exc = e
             if not database_raw:
