@@ -28,7 +28,7 @@ def execute(args: Namespace):
 
     if len(modifications) > 0:
         print('> ', end='')
-        delete(args)
+        delete(args, skip_cron_check=True)
         print('> ', end='')
         create(args)
         print(f'Modified {f'{',' if len(modifications) > 2 else ''} '.join(f'{'and ' if (index >= (len(modifications) - 1)) and (len(modifications) > 1) else ''}`{field}`' for index, field in enumerate(modifications))} of backup profile "{profile_name}".')
