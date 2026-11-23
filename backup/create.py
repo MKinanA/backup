@@ -17,7 +17,7 @@ def execute(args: Namespace):
         if profile_name in (profile['name'] for profile in profiles): raise expected(ValueError(f'Backup profile named "{profile_name}" already exists.'))
         else: profiles.append({
             'name': profile_name,
-            'source_path': str(args.source_path.resolve()),
-            'backup_path': str(args.backup_path.resolve()),
+            'source_path': str(args.source_path.expanduser().resolve()),
+            'backup_path': str(args.backup_path.expanduser().resolve()),
         })
     print(f'Created new backup profile "{profile_name}".')

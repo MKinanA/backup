@@ -17,13 +17,13 @@ def execute(args: Namespace):
     profiles = get_or_set(database_read(), 'profiles', [])
     if not profile_name in (profile['name'] for profile in profiles): raise expected(KeyError(f'Profile "{profile_name}" doesn\'t exist.'))
     profile: dict = profiles[next((index for index in range(len(profiles)) if profiles[index]['name'] == profile_name))]
-    source_path = Path(profile['source_path']).resolve()
-    backup_path = Path(profile['backup_path']).resolve()
+    source_path = Path(profile['source_path']).expanduser().resolve()
+    backup_path = Path(profile['backup_path']).expanduser().resolve()
 
     modifications = []
-    if (new_source_path := args.source_path) is not None and (new_source_path.resolve() != (source_path)): modifications.append('source_path')
+    if (new_source_path := args.source_path) is not None and (new_source_path.expanduser().resolve() != (source_path)): modifications.append('source_path')
     elif new_source_path is None: args.source_path = source_path
-    if (new_backup_path := args.backup_path) is not None and (new_backup_path.resolve() != (backup_path)): modifications.append('backup_path')
+    if (new_backup_path := args.backup_path) is not None and (new_backup_path.expanduser().resolve() != (backup_path)): modifications.append('backup_path')
     elif new_backup_path is None: args.backup_path = backup_path
 
     if len(modifications) > 0:
